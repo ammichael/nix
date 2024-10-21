@@ -23,35 +23,61 @@
       
       nixpkgs.config.allowUnfree = true;
 
+      ############
+      #  System  #
+      ############
+
+       system = {
+        activationScripts.postActivation.text = ''
+          ###############################################################################
+          # General UI/UX                                                               #
+          ###############################################################################
+          # Disable UI alert audio
+          defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
+          # Shows battery percentage
+          defaults write com.apple.menuextra.battery ShowPercent YES; killall SystemUIServer
+          # Increase sound quality for Bluetooth headphones/headsets
+          defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
+        '';
+      };
+
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
       environment.systemPackages =
         [ 
           pkgs.mkalias
           pkgs.neovim
+          pkgs.neofetch
           pkgs.alacritty
           pkgs.obsidian
           pkgs.vscode
+          pkgs.yarn
+          pkgs.cocoapods
+          pkgs.watchman
+          pkgs.pyenv
+          pkgs.fastlane
+          pkgs.zsh
+          pkgs.yt-dlp
+          pkgs.postman
+          pkgs.flutter
+          pkgs.fira-code
+          pkgs.jdk
+          pkgs.raycast
+          pkgs.ffmpeg
+          pkgs.gh
+          pkgs.arc-browser
+          pkgs.mas
         ];
 
       # Homebrew Apps
       
       homebrew = {
-        enable = true;
+        enable = false;
         brews = [
-          "mas"
           "nvm"
-          "yarn"
-          "cocoapods"
-          "watchman"
-          "pyenv"
-          "fastlane"
-          "zsh"
-          "yt-dlp"
         ];
         casks = [
           "arc"
-          "flutter"
           "notion"
           "notion-calendar"
           "clop"
@@ -59,8 +85,6 @@
           "displaylink"
           "sourcetree"
           "figma"
-          "postman"
-          "visual-studio-code"
           "android-studio"
         ];
         masApps = { 
@@ -70,10 +94,18 @@
           "TextSnipper" = 1528890965;
           "Affinity Designer" = 824183456;
           "Safari Adblock" = 1402042596;
+          "Windows App" = 1295203466;
         };
-        onActivation.cleanup = "zap";
-        onActivation.autoUpdate = true;
-        onActivation.upgrade = true;
+        onActivation = {
+          autoUpdate = true;
+          upgrade = true;
+          cleanup = "zap";
+        };
+        global = {
+          autoUpdate = true;
+          brewfile = true;
+          lockfiles = true;
+    };
       };
 
       # Custom fonts
@@ -102,6 +134,7 @@
           mru-spaces = false;
         };
         dock.persistent-apps = [
+          "/System/Applications/Launchpad.app"
           "/Applications/Arc.app"
           "/System/Applications/Messages.app"
           "/Applications/WhatsApp.app"
@@ -115,7 +148,12 @@
           "/Applications/Cursor.app"
           "/System/Applications/Utilities/Terminal.app"
         ];
-        NSGlobalDomain.AppleInterfaceStyle = "Dark";
+        NSGlobalDomain = {
+          AppleInterfaceStyle = "Dark";
+          ApplePressAndHoldEnabled = true;
+          NSAutomaticCapitalizationEnabled = false;
+          NSAutomaticSpellingCorrectionEnabled = false;
+        };
 
       CustomUserPreferences = {
           NSGlobalDomain = {
@@ -144,6 +182,7 @@
           "com.apple.screencapture" = {
             location = "~/Desktop";
             type = "png";
+            
           };
           # "com.apple.Safari" = {
           #   # Privacy: don’t send search queries to Apple
@@ -232,6 +271,32 @@
 
       # Create /etc/zshrc that loads the nix-darwin environment.
       programs.zsh.enable = true;  # default shell on catalina
+
+      # ZSH init
+      # programs.zsh.initExtra = ''
+      #   # Yarn global packages
+      #   if command -v yarn 1>/dev/null 2>&1; then
+      #     yarn global add yalc firebase-tools
+      #   fi
+
+      #   # Pyenv configuration
+      #   if command -v pyenv 1>/dev/null 2>&1; then
+      #     export PYENV_ROOT="$HOME/.pyenv"
+      #     export PATH="$PYENV_ROOT/bin:$PATH"
+      #     eval "$(pyenv init --path)"
+      #     eval "$(pyenv init -)"
+      #   fi
+
+      #   # NVM Configuration
+      #   export NVM_DIR="$HOME/.nvm"
+      #   [ -s "$(brew --prefix nvm)/nvm.sh" ] && \. "$(brew --prefix nvm)/nvm.sh"
+      #   [ -s "$(brew --prefix nvm)/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix nvm)/etc/bash_completion.d/nvm"
+
+      #   # Android SDK Configuration
+      #   export ANDROID_HOME=$HOME/Library/Android/sdk
+      #   export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/emulator
+      # '';
+
       # programs.fish.enable = true;
  
       # Set Git commit hash for darwin-version.
@@ -242,7 +307,7 @@
       system.stateVersion = 5;
 
       # The platform the configuration will be used on.
-      nixpkgs.hostPlatform = "x86_64-darwin";
+      nixpkgs.hostPlatform = "aarch64-darwin";
     };
     
     
@@ -251,7 +316,7 @@
   {
     # Build darwin flake using:
     # $ darwin-rebuild build --flake .#simple
-    darwinConfigurations."macbookpro" = nix-darwin.lib.darwinSystem {
+    darwinConfigurations."macbook" = nix-darwin.lib.darwinSystem {
       modules = [ 
         configuration
         nix-homebrew.darwinModules.nix-homebrew
@@ -272,6 +337,9 @@
         }
       ];
     };
+
+    # Enable sudo authentication with Touch ID  
+    security.pam.enableSudoTouchIdAuth = true;
 
     # Expose the package set, including overlays, for convenience.
     darwinPackages = self.darwinConfigurations."macbookpro".pkgs;
