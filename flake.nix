@@ -41,6 +41,12 @@
         '';
       };
 
+      # programs.git = {
+      #   enable = true;
+      #   userName  = "ammichael";
+      #   userEmail = "michael.amaral@platformbuilders.io";
+      # };
+
       # List packages installed in system profile. To search by name, run:
       # $ nix-env -qaP | grep wget
       environment.systemPackages =
@@ -67,6 +73,7 @@
           pkgs.gh
           pkgs.arc-browser
           pkgs.mas
+          pkgs.aldente
         ];
 
       # Homebrew Apps
@@ -95,6 +102,7 @@
           "Affinity Designer" = 824183456;
           "Safari Adblock" = 1402042596;
           "Windows App" = 1295203466;
+          "Hidden Bar" = 1452453066;
         };
         onActivation = {
           autoUpdate = true;
@@ -147,12 +155,14 @@
           "/Applications/Sourcetree.app"
           "/Applications/Cursor.app"
           "/System/Applications/Utilities/Terminal.app"
+          "/System/Applications/iPhone Mirroring.app"
         ];
         NSGlobalDomain = {
           AppleInterfaceStyle = "Dark";
           ApplePressAndHoldEnabled = true;
           NSAutomaticCapitalizationEnabled = false;
           NSAutomaticSpellingCorrectionEnabled = false;
+          "com.apple.trackpad.scaling" = 2.5;
         };
 
       CustomUserPreferences = {
@@ -184,38 +194,6 @@
             type = "png";
             
           };
-          # "com.apple.Safari" = {
-          #   # Privacy: don’t send search queries to Apple
-          #   UniversalSearchEnabled = false;
-          #   SuppressSearchSuggestions = true;
-          #   # Press Tab to highlight each item on a web page
-          #   WebKitTabToLinksPreferenceKey = true;
-          #   ShowFullURLInSmartSearchField = true;
-          #   # Prevent Safari from opening ‘safe’ files automatically after downloading
-          #   AutoOpenSafeDownloads = false;
-          #   ShowFavoritesBar = false;
-          #   IncludeInternalDebugMenu = true;
-          #   IncludeDevelopMenu = true;
-          #   WebKitDeveloperExtrasEnabledPreferenceKey = true;
-          #   WebContinuousSpellCheckingEnabled = true;
-          #   WebAutomaticSpellingCorrectionEnabled = false;
-          #   AutoFillFromAddressBook = false;
-          #   AutoFillCreditCardData = false;
-          #   AutoFillMiscellaneousForms = false;
-          #   WarnAboutFraudulentWebsites = true;
-          #   WebKitJavaEnabled = false;
-          #   WebKitJavaScriptCanOpenWindowsAutomatically = false;
-          #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks" = true;
-          #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" = true;
-          #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled" = false;
-          #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled" = false;
-          #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabledForLocalFiles" = false;
-          #   "com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically" = false;
-          # };
-          # "com.apple.mail" = {
-          #   # Disable inline attachments (just show the icons)
-          #   DisableInlineAttachmentViewing = true;
-          # };
           "com.apple.AdLib" = {
             allowApplePersonalizedAdvertising = false;
           };
@@ -270,44 +248,182 @@
       nix.settings.experimental-features = "nix-command flakes";
 
       # Create /etc/zshrc that loads the nix-darwin environment.
-      programs.zsh.enable = true;  # default shell on catalina
+      programs.zsh = {
+        enable = true;
+        enableBashCompletion = true;
+        enableCompletion = true;
+      };
+      users.users.mike = {
+        name = "mike";
+        home = "/Users/mike";
+    };
 
       # ZSH init
-      # programs.zsh.initExtra = ''
-      #   # Yarn global packages
-      #   if command -v yarn 1>/dev/null 2>&1; then
-      #     yarn global add yalc firebase-tools
-      #   fi
+ 
+      # programs.zsh.initExtraFirst = ''
+      #   # Amazon Q pre block. Keep at the top of this file.
+      #   # If you come from bash you might have to change your $PATH.
+      #   # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-      #   # Pyenv configuration
-      #   if command -v pyenv 1>/dev/null 2>&1; then
-      #     export PYENV_ROOT="$HOME/.pyenv"
-      #     export PATH="$PYENV_ROOT/bin:$PATH"
-      #     eval "$(pyenv init --path)"
-      #     eval "$(pyenv init -)"
-      #   fi
+      #   # Path to your oh-my-zsh installation.
+      #   export ZSH="$HOME/.oh-my-zsh"
 
-      #   # NVM Configuration
-      #   export NVM_DIR="$HOME/.nvm"
-      #   [ -s "$(brew --prefix nvm)/nvm.sh" ] && \. "$(brew --prefix nvm)/nvm.sh"
-      #   [ -s "$(brew --prefix nvm)/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix nvm)/etc/bash_completion.d/nvm"
+      #   # Set name of the theme to load --- if set to "random", it will
+      #   # load a random theme each time oh-my-zsh is loaded, in which case,
+      #   # to know which specific one was loaded, run: echo $RANDOM_THEME
+      #   # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+      #   ZSH_THEME="robbyrussell"
 
-      #   # Android SDK Configuration
+      #   # Set list of themes to pick from when loading at random
+      #   # Setting this variable when ZSH_THEME=random will cause zsh to load
+      #   # a theme from this variable instead of looking in $ZSH/themes/
+      #   # If set to an empty array, this variable will have no effect.
+      #   # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+      #   # Uncomment the following line to use case-sensitive completion.
+      #   # CASE_SENSITIVE="true"
+
+      #   # Uncomment the following line to use hyphen-insensitive completion.
+      #   # Case-sensitive completion must be off. _ and - will be interchangeable.
+      #   # HYPHEN_INSENSITIVE="true"
+
+      #   # Uncomment one of the following lines to change the auto-update behavior
+      #   # zstyle ':omz:update' mode disabled  # disable automatic updates
+      #   # zstyle ':omz:update' mode auto      # update automatically without asking
+      #   # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+
+      #   # Uncomment the following line to change how often to auto-update (in days).
+      #   # zstyle ':omz:update' frequency 13
+
+      #   # Uncomment the following line if pasting URLs and other text is messed up.
+      #   # DISABLE_MAGIC_FUNCTIONS="true"
+
+      #   # Uncomment the following line to disable colors in ls.
+      #   # DISABLE_LS_COLORS="true"
+
+      #   # Uncomment the following line to disable auto-setting terminal title.
+      #   # DISABLE_AUTO_TITLE="true"
+
+      #   # Uncomment the following line to enable command auto-correction.
+      #   # ENABLE_CORRECTION="true"
+
+      #   # Uncomment the following line to display red dots whilst waiting for completion.
+      #   # You can also set it to another string to have that shown instead of the default red dots.
+      #   # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+      #   # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
+      #   # COMPLETION_WAITING_DOTS="true"
+
+      #   # Uncomment the following line if you want to disable marking untracked files
+      #   # under VCS as dirty. This makes repository status check for large repositories
+      #   # much, much faster.
+      #   # DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+      #   # Uncomment the following line if you want to change the command execution time
+      #   # stamp shown in the history command output.
+      #   # You can set one of the optional three formats:
+      #   # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+      #   # or set a custom format using the strftime function format specifications,
+      #   # see 'man strftime' for details.
+      #   # HIST_STAMPS="mm/dd/yyyy"
+
+      #   # Would you like to use another custom folder than $ZSH/custom?
+      #   # ZSH_CUSTOM=/path/to/new-custom-folder
+
+      #   # Which plugins would you like to load?
+      #   # Standard plugins can be found in $ZSH/plugins/
+      #   # Custom plugins may be added to $ZSH_CUSTOM/plugins/
+      #   # Example format: plugins=(rails git textmate ruby lighthouse)
+      #   # Add wisely, as too many plugins slow down shell startup.
+      #   plugins=(git poetry)
+
+      #   source $ZSH/oh-my-zsh.sh
+
+      #   # User configuration
+
+      #   # export MANPATH="/usr/local/man:$MANPATH"
+
+      #   # You may need to manually set your language environment
+      #   # export LANG=en_US.UTF-8
+
+      #   # Preferred editor for local and remote sessions
+      #   # if [[ -n $SSH_CONNECTION ]]; then
+      #   #   export EDITOR='vim'
+      #   # else
+      #   #   export EDITOR='mvim'
+      #   # fi
+
+      #   # Compilation flags
+      #   # export ARCHFLAGS="-arch x86_64"
+
+      #   # Set personal aliases, overriding those provided by oh-my-zsh libs,
+      #   # plugins, and themes. Aliases can be placed here, though oh-my-zsh
+      #   # users are encouraged to define aliases within the ZSH_CUSTOM folder.
+      #   # For a full list of active aliases, run `alias`.
+      #   #
+      #   # Example aliases
+      #   # alias zshconfig="mate ~/.zshrc"
+      #   # alias ohmyzsh="mate ~/.oh-my-zsh"
+      #   # SSH
+      #   eval "$(ssh-agent -s)"
+      #   ssh-add ~/.ssh/id_rsa
+
+      #   # NVM
+      #   export NVM_DIR=~/.nvm
+      #   source $(brew --prefix nvm)/nvm.sh
       #   export ANDROID_HOME=$HOME/Library/Android/sdk
-      #   export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/emulator
+      #   export PATH=$PATH:$ANDROID_HOME/platform-tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools/bin
+      #   export PATH=$PATH:$ANDROID_HOME/emulator
+      #   # NVM
+      #   export NVM_DIR=~/.nvm
+      #   source $(brew --prefix nvm)/nvm.sh
+      #   export ANDROID_HOME=$HOME/Library/Android/sdk
+      #   export PATH=$PATH:$ANDROID_HOME/platform-tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools/bin
+      #   export PATH=$PATH:$ANDROID_HOME/emulator
+      #   # NVM
+      #   export NVM_DIR=~/.nvm
+      #   source $(brew --prefix nvm)/nvm.sh
+      #   export ANDROID_HOME=$HOME/Library/Android/sdk
+      #   export PATH=$PATH:$ANDROID_HOME/platform-tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools/bin
+      #   export PATH=$PATH:$ANDROID_HOME/emulator
+      #   # NVM
+      #   export NVM_DIR=~/.nvm
+      #   source $(brew --prefix nvm)/nvm.sh
+      #   export ANDROID_HOME=$HOME/Library/Android/sdk
+      #   export PATH=$PATH:$ANDROID_HOME/platform-tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools
+      #   export PATH=$PATH:$ANDROID_HOME/tools/bin
+      #   export PATH=$PATH:$ANDROID_HOME/emulator
+
+      #   # SSH
+      #   eval "$(ssh-agent -s)"
+      #   ssh-add ~/.ssh/id_rsa
+
+      #   # Amazon Q post block. Keep at the bottom of this file.
+
+
       # '';
 
       # programs.fish.enable = true;
  
       # Set Git commit hash for darwin-version.
       system.configurationRevision = self.rev or self.dirtyRev or null;
+      system.activationScripts.postUserActivation.text = ''
+      # Following line should allow us to avoid a logout/login cycle
+        /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+      '';
 
       # Used for backwards compatibility, please read the changelog before changing.
       # $ darwin-rebuild changelog
       system.stateVersion = 5;
 
       # The platform the configuration will be used on.
-      nixpkgs.hostPlatform = "aarch64-darwin";
+      nixpkgs.hostPlatform = "x86_64-darwin";
     };
     
     
