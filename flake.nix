@@ -135,7 +135,6 @@
           tilesize = 48;
           launchanim = false;
           static-only = false;
-          showhidden = true;
           show-recents = false;
           show-process-indicators = true;
           orientation = "bottom";
