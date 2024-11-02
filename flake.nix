@@ -68,9 +68,9 @@
         enable = true;
         brews = [
           "nvm"
+          "yarn"
         ];
         casks = [
-          "yarn"
           "raycast"
           "arc"
           "chatgpt"
@@ -106,7 +106,7 @@
           autoUpdate = true;
           brewfile = true;
           lockfiles = true;
-    };
+        };
       };
 
       # Custom fonts
@@ -166,10 +166,7 @@
             # Enable window tabbing
             AppleWindowTabbingMode = "always";
           };
-          "com.apple.Safari" = {
-            # Prevent Safari from opening ‘safe’ files automatically after downloading
-            AutoOpenSafeDownloads = false;
-          };
+  
           "com.apple.finder" = {
             ShowExternalHardDrivesOnDesktop = true;
             ShowHardDrivesOnDesktop = false;
