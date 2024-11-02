@@ -36,8 +36,6 @@
           defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
           # Shows battery percentage
           defaults write com.apple.menuextra.battery ShowPercent YES; killall SystemUIServer
-          # Increase sound quality for Bluetooth headphones/headsets
-          defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
         '';
       };
 
@@ -54,37 +52,31 @@
           pkgs.mkalias
           pkgs.neovim
           pkgs.neofetch
-          pkgs.alacritty
-          pkgs.obsidian
-          pkgs.vscode
-          pkgs.yarn
-          pkgs.cocoapods
-          pkgs.watchman
           pkgs.pyenv
           pkgs.fastlane
           pkgs.zsh
           pkgs.yt-dlp
           pkgs.postman
-          pkgs.flutter
-          pkgs.fira-code
           pkgs.jdk
-          pkgs.raycast
           pkgs.ffmpeg
-          pkgs.gh
-          pkgs.arc-browser
           pkgs.mas
-          pkgs.aldente
         ];
 
       # Homebrew Apps
       
       homebrew = {
-        enable = false;
+        enable = true;
         brews = [
           "nvm"
         ];
         casks = [
+          "yarn"
+          "raycast"
           "arc"
+          "chatgpt"
+          "visual-studio-code"
+          "warp"
+          "cursor"
           "notion"
           "notion-calendar"
           "clop"
@@ -93,6 +85,7 @@
           "sourcetree"
           "figma"
           "android-studio"
+          "aldente"
         ];
         masApps = { 
           "WhatsApp" = 1147396723;
@@ -153,7 +146,7 @@
           "/Applications/Notion Calendar.app"
           "/Applications/Sourcetree.app"
           "/Applications/Cursor.app"
-          "/System/Applications/Utilities/Terminal.app"
+          "/Applications/Warp.app"
           "/System/Applications/iPhone Mirroring.app"
         ];
         NSGlobalDomain = {
@@ -171,7 +164,7 @@
           };
           "com.apple.finder" = {
             ShowExternalHardDrivesOnDesktop = true;
-            ShowHardDrivesOnDesktop = true;
+            ShowHardDrivesOnDesktop = false;
             ShowMountedServersOnDesktop = true;
             ShowRemovableMediaOnDesktop = true;
             _FXSortFoldersFirst = true;
@@ -422,7 +415,8 @@
       system.stateVersion = 5;
 
       # The platform the configuration will be used on.
-      nixpkgs.hostPlatform = "x86_64-darwin";
+      # nixpkgs.hostPlatform = "x86_64-darwin";
+      nixpkgs.hostPlatform = "aarch64-darwin";
     };
     
     
@@ -439,6 +433,8 @@
           nix-homebrew = {
             # Install Homebrew under the default prefix
             enable = true;
+            # Automatically migrate existing Homebrew installations
+            autoMigrate = true;
 
             # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
             # enableRosetta = true;
@@ -446,8 +442,6 @@
             # User owning the Homebrew prefix
             user = "mike";
 
-            # Automatically migrate existing Homebrew installations
-            autoMigrate = true;
           };
         }
       ];
