@@ -88,7 +88,7 @@
           "aldente"
         ];
         masApps = { 
-          "WhatsApp" = 1147396723;
+          "WhatsApp" = 310633997;
           "Slack" = 803453959;
           "Spark" = 6445813049;
           "TextSnipper" = 1528890965;
