@@ -132,23 +132,24 @@
           show-process-indicators = true;
           orientation = "bottom";
           mru-spaces = false;
+          mineffect = "scale";
+          persistent-apps = [
+            "/System/Applications/Launchpad.app"
+            "/Applications/Arc.app"
+            "/System/Applications/Messages.app"
+            "/Applications/WhatsApp.app"
+            "/Applications/Slack.app"
+            "/Applications/Spark Desktop.app"
+            "/Applications/ChatGPT.app"
+            "/Applications/Figma.app"
+            "/Applications/Notion.app"
+            "/Applications/Notion Calendar.app"
+            "/Applications/Sourcetree.app"
+            "/Applications/Cursor.app"
+            "/Applications/Warp.app"
+            "/System/Applications/iPhone Mirroring.app"
+          ];
         };
-        dock.persistent-apps = [
-          "/System/Applications/Launchpad.app"
-          "/Applications/Arc.app"
-          "/System/Applications/Messages.app"
-          "/Applications/WhatsApp.app"
-          "/Applications/Slack.app"
-          "/Applications/Spark Desktop.app"
-          "/Applications/ChatGPT.app"
-          "/Applications/Figma.app"
-          "/Applications/Notion.app"
-          "/Applications/Notion Calendar.app"
-          "/Applications/Sourcetree.app"
-          "/Applications/Cursor.app"
-          "/Applications/Warp.app"
-          "/System/Applications/iPhone Mirroring.app"
-        ];
         NSGlobalDomain = {
           AppleInterfaceStyle = "Dark";
           ApplePressAndHoldEnabled = true;
@@ -161,6 +162,13 @@
           NSGlobalDomain = {
             # Add a context menu item for showing the Web Inspector in web views
             WebKitDeveloperExtras = true;
+
+            # Enable window tabbing
+            AppleWindowTabbingMode = "always";
+          };
+          "com.apple.Safari" = {
+            # Prevent Safari from opening ‘safe’ files automatically after downloading
+            AutoOpenSafeDownloads = false;
           };
           "com.apple.finder" = {
             ShowExternalHardDrivesOnDesktop = true;
